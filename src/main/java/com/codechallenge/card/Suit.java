@@ -1,4 +1,4 @@
-package com.codechallenge;
+package com.codechallenge.card;
 
 /**
  * Enumeration of card suits

@@ -1,9 +1,9 @@
-package com.codechallenge;
+package com.codechallenge.card;
 
 /**
  * Enumeration of card types
  */
-public enum CardType {
+public enum CardRank {
     Two,
     Three,
     Four,
