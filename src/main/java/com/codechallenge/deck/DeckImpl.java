@@ -16,15 +16,17 @@ import java.util.Random;
  */
 public class DeckImpl implements Deck {
     /** Stack of cards */
-    protected Deque<Card> cardStack;
+    Deque<Card> cardStack;
+
+    public DeckImpl() {
+        this.cardStack = new ArrayDeque<>();
+    }
 
     @Override
     public void create(int numberOfSuits, int numberOfRanks) {
-        cardStack = new ArrayDeque<>();
-
-        for (int suit = 0; suit < numberOfSuits; suit++) {
-            for (int rank = 0; rank < numberOfRanks; rank++) {
-                cardStack.push(new Card(suit, rank));
+        for (int rank = 0; rank < numberOfRanks; rank++) {
+            for (int suit = 0; suit < numberOfSuits; suit++) {
+                cardStack.push(new Card(rank, suit));
             }
         }
     }
@@ -45,5 +47,40 @@ public class DeckImpl implements Deck {
             return null;
         }
         return cardStack.pop();
+    }
+
+    /**
+     * Add to top of the deck
+     */
+    public void push(Card card) {
+        cardStack.push(card);
+    }
+
+    /**
+     * Add to the bottom of the deck
+     */
+    public void addToBottom(Card card) {
+        cardStack.addLast(card);
+    }
+
+    /**
+     * Is this deck empty
+     */
+    public boolean isEmpty() {
+        return cardStack.isEmpty();
+    }
+
+    /**
+     * Number of cards in the deck
+     */
+    public int size() {
+        return cardStack.size();
+    }
+
+    @Override
+    public String toString() {
+        return "DeckImpl{" +
+                cardStack +
+                '}';
     }
 }

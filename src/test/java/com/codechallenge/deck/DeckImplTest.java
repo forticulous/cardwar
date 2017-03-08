@@ -25,7 +25,7 @@ public class DeckImplTest {
         Deck deck = new DeckImpl();
         deck.create(Suit.values().length, CardRank.values().length);
 
-        assertEquals(Suit.values().length * CardRank.values().length, ((DeckImpl) deck).cardStack.size());
+        assertEquals(Suit.values().length * CardRank.values().length, ((DeckImpl) deck).size());
     }
 
     /**
@@ -57,11 +57,11 @@ public class DeckImplTest {
         deck.create(Suit.values().length, CardRank.values().length);
 
         Card topCard = ((DeckImpl) deck).cardStack.peek();
-        int numCards = ((DeckImpl) deck).cardStack.size();
+        int numCards = ((DeckImpl) deck).size();
 
         Card dealtCard = deck.deal();
 
         assertSame(topCard, dealtCard);
-        assertEquals(numCards - 1, ((DeckImpl) deck).cardStack.size());
+        assertEquals(numCards - 1, ((DeckImpl) deck).size());
     }
 }

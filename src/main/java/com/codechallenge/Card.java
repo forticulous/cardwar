@@ -1,5 +1,8 @@
 package com.codechallenge;
 
+import com.codechallenge.card.CardRank;
+import com.codechallenge.card.Suit;
+
 /**
  * Instance of a card with suit and rank attributes
  */
@@ -7,9 +10,14 @@ public class Card {
     private final int suit;
     private final int rank;
 
-    public Card(int suit, int rank) {
-        this.suit = suit;
+    public Card(int rank, int suit) {
         this.rank = rank;
+        this.suit = suit;
+    }
+
+    public Card(CardRank rank, Suit suit) {
+        this.rank = rank.ordinal();
+        this.suit = suit.ordinal();
     }
 
     public int getSuit() {
@@ -41,9 +49,6 @@ public class Card {
 
     @Override
     public String toString() {
-        return "Card{" +
-                "suit=" + suit +
-                ", rank=" + rank +
-                '}';
+        return "Card{" + CardRank.fromInt(rank) + " of " + Suit.fromInt(suit) + "s}";
     }
 }

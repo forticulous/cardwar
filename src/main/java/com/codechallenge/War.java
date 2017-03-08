@@ -4,10 +4,12 @@ import com.codechallenge.card.CardRank;
 import com.codechallenge.card.Suit;
 import com.codechallenge.deck.DeckImpl;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Program that plays the card game war
@@ -24,51 +26,129 @@ public class War {
         deck.create(numberOfSuits, numberOfRanks);
         deck.shuffle();
 
-        // Distribute cards evenly among players
-        List<Deque<Card>> playerPiles = new ArrayList<>();
-        for (int playerNumber = 0; playerNumber < numberOfPlayers; playerNumber++) {
-            playerPiles.add(new ArrayDeque<>());
-        }
-
-        int playerNumber = 0;
-        for (Card card = deck.deal(); card != null; card = deck.deal()) {
-            Deque<Card> playerPile = playerPiles.get(playerNumber);
-            playerPile.push(card);
-
-            playerNumber = (playerNumber + 1) % playerPiles.size();
-        }
-
-        pretty(playerPiles);
+        List<DeckImpl> playerPiles = dealCards(numberOfPlayers, deck);
+        prettyPrint(playerPiles);
 
         // battle until one player has all cards
         int totalCards = numberOfSuits * numberOfRanks;
         while (playerPiles.stream().noneMatch((pile) -> pile.size() == totalCards)) {
             battle(playerPiles);
-            pretty(playerPiles);
+            prettyPrint(playerPiles);
         }
     }
 
-    private void pretty(List<Deque<Card>> playerPiles) {
+    List<DeckImpl> dealCards(int numberOfPlayers, Deck deck) {
+        // Distribute cards evenly among players
+        List<DeckImpl> playerPiles = Stream.generate(DeckImpl::new)
+                .limit(numberOfPlayers)
+                .collect(Collectors.toList());
+
+        for (int playerNumber = 0; ; playerNumber = (playerNumber + 1) % numberOfPlayers) {
+            Card card = deck.deal();
+            if (card == null) {
+                break;
+            }
+
+            playerPiles.get(playerNumber).push(card);
+        }
+
+        return playerPiles;
+    }
+
+    private void prettyPrint(List<DeckImpl> playerPiles) {
         for (int player = 0; player < playerPiles.size(); player++) {
             System.out.println(String.format("Player %s has %s cards", player, playerPiles.get(player).size()));
-            //System.out.println(playerPiles.get(player));
         }
     }
 
-    private void battle(List<Deque<Card>> playerPiles) {
+    void battle(List<DeckImpl> playerPiles) {
         List<Card> spoils = new ArrayList<>();
 
-        for (Deque<Card> playerPile : playerPiles) {
-            if (!playerPile.isEmpty()) {
-                spoils.add(playerPile.pop());
+        // all players with cards join the battle initially
+        List<Integer> playersIn = new ArrayList<>();
+        for (int player = 0; player < playerPiles.size(); player++) {
+            if (!playerPiles.get(player).isEmpty()) {
+                playersIn.add(player);
             }
         }
 
+        // sub-battles continue until there is one winner
+        boolean isWar = false;
+        while (playersIn.size() > 1) {
+            if (isWar) {
+                System.out.println("War!");
+            } else {
+                System.out.println("Battle!");
+            }
+
+
+            List<PlayerCard> thisBattle = new ArrayList<>();
+            Iterator<Integer> iter = playersIn.iterator();
+            while (iter.hasNext()) {
+                Integer player = iter.next();
+
+                Card card = playerPiles.get(player).deal();
+
+                // if war, players play an additional card into the spoils
+                if (isWar) {
+                    System.out.println(String.format("Player %s plays %s face down", player, card));
+                    spoils.add(card);
+
+                    card = playerPiles.get(player).deal();
+
+                    // if the player is out of cards then they lose
+                    if (card == null) {
+                        System.out.println(String.format("Player %s ran out of cards!", player));
+                        iter.remove();
+                        continue;
+                    }
+                }
+
+                System.out.println(String.format("Player %s plays %s", player, card));
+
+                thisBattle.add(new PlayerCard(card, player));
+            }
+
+            // find the highest rank in this sub-battle
+            int highestRank = thisBattle.stream()
+                    .max(Comparator.comparingInt(playerCard -> playerCard.card.getRank()))
+                    .map((playerCard) -> playerCard.getCard().getRank()).get();
+
+            // remove players who didn't have the highest rank
+            thisBattle.stream()
+                    .filter((playerCard) -> playerCard.getCard().getRank() != highestRank)
+                    .forEach((playerCard) -> playersIn.remove(playerCard.getPlayer()));
+
+            // add all cards in this sub-battle to the spoils
+            thisBattle.forEach((playerCard) -> spoils.add(playerCard.getCard()));
+
+            isWar = true;
+        }
+
         // Determine winner
-        // TODO player 0 always wins
-        int winner = 0;
+        int winner = playersIn.get(0);
+
+        System.out.println(String.format("Player %s wins %s cards!", winner, spoils.size()));
 
         // Add spoils to bottom of player's pile
-        spoils.forEach((card) -> playerPiles.get(winner).addLast(card));
+        spoils.forEach((card) -> playerPiles.get(winner).addToBottom(card));
+    }
+
+    private class PlayerCard {
+        private final Card card;
+        private final int player;
+
+        private PlayerCard(Card card, int player) {
+            this.card = card;
+            this.player = player;
+        }
+
+        public Card getCard() {
+            return card;
+        }
+
+        public int getPlayer() {
+            return player;
+        }
     }
 }

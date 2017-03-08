@@ -16,5 +16,12 @@ public enum CardRank {
     Jack,
     Queen,
     King,
-    Ace
+    Ace;
+
+    public static CardRank fromInt(int num) {
+        if (num < 0 || num > values().length) {
+            return null;
+        }
+        return values()[num];
+    }
 }
