@@ -37,12 +37,10 @@ public class DeckImplTest {
         deck.create(Suit.values().length, CardRank.values().length);
 
         List<Card> unshuffled = new ArrayList<>(((DeckImpl) deck).cardStack);
-        System.out.println(unshuffled);
 
         deck.shuffle();
 
         List<Card> shuffled = new ArrayList<>(((DeckImpl) deck).cardStack);
-        System.out.println(shuffled);
 
         assertEquals(unshuffled.size(), shuffled.size());
         assertNotEquals(unshuffled, shuffled);
