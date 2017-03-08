@@ -91,6 +91,9 @@ public class WarTest {
         assertEquals(6, playerPiles.get(1).size());
     }
 
+    /**
+     * Test when a player runs out of cards during war, they lose the war
+     */
     @Test
     public void outOfCardsDuringWarTest() throws Exception {
         War war = new War();
