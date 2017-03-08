@@ -111,7 +111,7 @@ public class War {
 
             // find the highest rank in this sub-battle
             int highestRank = thisBattle.stream()
-                    .max(Comparator.comparingInt(playerCard -> playerCard.card.getRank()))
+                    .max(Comparator.comparingInt(playerCard -> playerCard.getCard().getRank()))
                     .map((playerCard) -> playerCard.getCard().getRank()).get();
 
             // remove players who didn't have the highest rank
@@ -130,10 +130,13 @@ public class War {
 
         System.out.println(String.format("Player %s wins %s cards!", winner, spoils.size()));
 
-        // Add spoils to bottom of player's pile
+        // Add spoils to bottom of winner's pile
         spoils.forEach((card) -> playerPiles.get(winner).addToBottom(card));
     }
 
+    /**
+     * Helper class associating a card with a player
+     */
     private class PlayerCard {
         private final Card card;
         private final int player;
