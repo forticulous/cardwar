@@ -12,6 +12,14 @@ public class Card {
         this.rank = rank;
     }
 
+    public int getSuit() {
+        return suit;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

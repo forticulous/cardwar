@@ -25,7 +25,7 @@ public class DeckImplTest {
         Deck deck = new DeckImpl();
         deck.create(Suit.values().length, CardRank.values().length);
 
-        assertEquals(52, ((DeckImpl) deck).cardStack.size());
+        assertEquals(Suit.values().length * CardRank.values().length, ((DeckImpl) deck).cardStack.size());
     }
 
     /**

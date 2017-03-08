@@ -41,6 +41,9 @@ public class DeckImpl implements Deck {
 
     @Override
     public Card deal() {
+        if (cardStack.isEmpty()) {
+            return null;
+        }
         return cardStack.pop();
     }
 }
