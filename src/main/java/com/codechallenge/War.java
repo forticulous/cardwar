@@ -5,12 +5,11 @@ import com.codechallenge.card.Suit;
 import com.codechallenge.deck.DeckImpl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -67,22 +66,15 @@ public class War {
         List<Card> spoils = new ArrayList<>();
 
         // all players with cards join the battle initially
-        Set<Integer> playersIn = new HashSet<>();
-        for (int player = 0; player < playerPiles.size(); player++) {
-            if (!playerPiles.get(player).isEmpty()) {
-                playersIn.add(player);
-            }
-        }
+        Set<Integer> playersIn = IntStream.range(0, playerPiles.size())
+                .filter((player) -> !playerPiles.get(player).isEmpty())
+                .boxed()
+                .collect(Collectors.toSet());
 
         // sub-battles continue until there is one winner
         boolean isWar = false;
         while (playersIn.size() > 1) {
-            if (isWar) {
-                System.out.println("War!");
-            } else {
-                System.out.println("Battle!");
-            }
-
+            System.out.println(isWar ? "War!" : "Battle!");
 
             List<PlayerCard> thisBattle = new ArrayList<>();
             Iterator<Integer> iter = playersIn.iterator();
@@ -113,16 +105,20 @@ public class War {
 
             // find the highest rank in this sub-battle
             int highestRank = thisBattle.stream()
-                    .max(Comparator.comparingInt(playerCard -> playerCard.getCard().getRank()))
-                    .map((playerCard) -> playerCard.getCard().getRank()).get();
+                    .map(PlayerCard::getCard)
+                    .mapToInt(Card::getRank)
+                    .max().getAsInt();
 
             // remove players who didn't have the highest rank
             thisBattle.stream()
                     .filter((playerCard) -> playerCard.getCard().getRank() != highestRank)
-                    .forEach((playerCard) -> playersIn.remove(playerCard.getPlayer()));
+                    .map(PlayerCard::getPlayer)
+                    .forEach(playersIn::remove);
 
             // add all cards in this sub-battle to the spoils
-            thisBattle.forEach((playerCard) -> spoils.add(playerCard.getCard()));
+            thisBattle.stream()
+                    .map(PlayerCard::getCard)
+                    .forEach(spoils::add);
 
             isWar = true;
         }

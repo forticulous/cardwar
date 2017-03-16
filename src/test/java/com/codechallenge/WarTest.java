@@ -59,6 +59,9 @@ public class WarTest {
         assertEquals(0, playerPiles.get(1).size());
     }
 
+    /**
+     * Simple battle scenario with 3 players
+     */
     @Test
     public void threePlayersTest() throws Exception {
         War war = new War();
