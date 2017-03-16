@@ -6,8 +6,10 @@ import com.codechallenge.deck.DeckImpl;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,7 +67,7 @@ public class War {
         List<Card> spoils = new ArrayList<>();
 
         // all players with cards join the battle initially
-        List<Integer> playersIn = new ArrayList<>();
+        Set<Integer> playersIn = new HashSet<>();
         for (int player = 0; player < playerPiles.size(); player++) {
             if (!playerPiles.get(player).isEmpty()) {
                 playersIn.add(player);
@@ -126,7 +128,7 @@ public class War {
         }
 
         // Determine winner
-        int winner = playersIn.get(0);
+        int winner = playersIn.stream().findFirst().get();
 
         System.out.println(String.format("Player %s wins %s cards!", winner, spoils.size()));
 

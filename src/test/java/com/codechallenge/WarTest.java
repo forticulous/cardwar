@@ -59,6 +59,39 @@ public class WarTest {
         assertEquals(0, playerPiles.get(1).size());
     }
 
+    @Test
+    public void threePlayersTest() throws Exception {
+        War war = new War();
+
+        List<DeckImpl> playerPiles = new ArrayList<>();
+        {
+            DeckImpl playerOnePile = new DeckImpl();
+            playerOnePile.push(new Card(CardRank.King, Suit.Diamond));
+
+            playerPiles.add(playerOnePile);
+        }
+
+        {
+            DeckImpl playerTwoPile = new DeckImpl();
+            playerTwoPile.push(new Card(CardRank.Three, Suit.Club));
+
+            playerPiles.add(playerTwoPile);
+        }
+
+        {
+            DeckImpl playerThreePile = new DeckImpl();
+            playerThreePile.push(new Card(CardRank.Seven, Suit.Heart));
+
+            playerPiles.add(playerThreePile);
+        }
+
+        war.battle(playerPiles);
+
+        assertEquals(3, playerPiles.get(0).size());
+        assertEquals(0, playerPiles.get(1).size());
+        assertEquals(0, playerPiles.get(2).size());
+    }
+
     /**
      * War scenario
      */
